@@ -227,6 +227,32 @@ where <条件表达式>;
 
 1.sql中子句的书写顺序是固定的，不能随意更改。where必须紧跟在from之后。
 
+### 1.使用算数运算符
+
+见例子。
+
+1.select子句中可以使用常数或者表达式。
+
+2.可以使用加减乘除（+，-，*，/）。
+
+3.所有包含NULL的计算，结果肯定是NULL。
+
+4.5/0会发生错误，NULL/0结果是NULL。
+
+### 2.比较运算符
+
+见例子。
+
+1.使用等号（=），不等号（<>），大于等于（>=），大于，小于等于，小于等。
+
+2.不要混数字和字符串的比较。
+
+3.不能对NULL使用比较运算符。
+
+4.IS NULL：专门用来判断是否为NULL，判断等于NULL。
+
+5.IS NOT NULL：判断不等于NULL。
+
 ## N.例子：
 
 ```sql
@@ -260,7 +286,17 @@ select product_name, product_type
 from Product
 where product_type = '衣服';
 
+--在select中使用算数运算符，对sale_price字段进行翻倍展示
+select product_name, sale_price,
+		sale_price * 2 as "sale_price_x2"
+from Product;
 
+--在select中使用比较运算符，选出sale_price不为500的其他两列
+select product_name, product_type
+from Product
+where sale_price <> 500;
+
+--
 
 ```
 

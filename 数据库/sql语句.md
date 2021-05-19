@@ -131,7 +131,7 @@ insert into <表名> values (<列1的值>,<列2的值>,<列N的值>);
 commit;--确定插入
 ```
 
-## N.例子：
+## N.例子
 
 ```sql
 --创建数据库
@@ -253,7 +253,34 @@ where <条件表达式>;
 
 5.IS NOT NULL：判断不等于NULL。
 
-## N.例子：
+6.希望选取NULL记录时，需要在条件表达式中使用IS NULL运算符。希望选取不是NULL的记录时，需要在条件表达式中使用IS NOT NULL运算符。
+
+### 3.逻辑运算符
+
+1.NOT：在条件前使用，表示否定某一条件。见例子。
+
+2.AND：在其两侧的查询条件都成立时整个查询才条件成立，并且。
+
+3.OR：或者。
+
+4.记得通过括号来处理交集或者并集。默认and运算符会优先于or运算符，也就是会先计算and左右的，再计算or左右的。
+
+### 4.三值逻辑
+
+1.真值：and和or和not计算出的true或者false。在sql中还有一种真值叫做不确定（UNKNOWN），与NULL有关。
+
+2.关于UNKNOWN：可以将UNKNOWN可以看成0.6。
+
+| A       | B       | 运算符 | 结果    |
+| ------- | ------- | ------ | ------- |
+| unknown | true    | and    | unknown |
+| unknown | false   | and    | false   |
+| unknown | unknown | and    | unknown |
+| unknown | true    | or     | true    |
+| unknown | false   | or     | unknown |
+| unknown | unknown | or     | unknown |
+
+## N.例子
 
 ```sql
 --基本查询
@@ -296,7 +323,80 @@ select product_name, product_type
 from Product
 where sale_price <> 500;
 
---
+--选取值为NULL的记录
+select product_name, purchase_price
+from Producr
+where purchase_price IS NULL;
 
+--选取值不为NULL的记录
+select product_name, purchase_price
+from Producr
+where purchase_price IS NOT NULL;
+
+--使用NOT查询sale_price大于1000的记录
+select product_name, product_type, sale_price
+from Product
+where NOT sale_price < 1000;
+
+--使用and运算符,查询product_type为厨房用具，并且sale_price大于等于3000的记录
+select product_name, purchase_price
+from Product
+where product_type = '厨房用具' and sale_price >= 3000;
+
+--使用or运算符，查询product_type为厨房用具，或者sale_price大于等于3000的记录
+select product_name, purchase_price
+from Product
+where product_type = '厨房用具' or sale_price >= 3000;
 ```
 
+
+
+# 三、查询统计
+
+## 1.聚合函数
+
+函数有输入参数和返回值。
+
+### 1.count：计算表中的记录数，也就是行数。
+
+```sql
+select count(<列名>)
+from <表名>;
+```
+
+输入函数为星号（*）会统计NULL的记录，其他的输入参数则会不会统计NULL行数，也就是会得到NULL之外的数据行数。
+
+### 2.sum：计算表中数值列中数据的合计值。
+
+```sql
+select sum(<列名>)
+from Product;
+```
+
+
+
+### 3.avg：计算平均值。
+
+### 4.max：求最大值。
+
+### 5.min：求最小值。
+
+
+
+
+
+## N.例子
+
+```sql
+--计算全部数据的行数
+select count(*)
+from Product;
+
+--计算NULL之外的数据行数
+select count(purchase_price)
+from Product;
+
+--计算sale_price的合计值
+select sum(sale_price)
+from Product;
+```

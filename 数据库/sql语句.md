@@ -373,17 +373,45 @@ select sum(<列名>)
 from Product;
 ```
 
-
+聚合函数会将NULL排除在外。但是count(*)除外，并不会排除NULL。
 
 ### 3.avg：计算平均值。
 
-### 4.max：求最大值。
+```sql
+select avg(<列名>)
+from <表名>;
+```
 
-### 5.min：求最小值。
+### 4.max和min：求最大值和最小值。
 
+```sql
+select max(<列名>),min(<列名>)
+from <表名>;
+```
 
+max/min函数几乎适用于所有数据类型的列。sum/avg函数只适用于数值类型的列。
 
+### 5.distinct：删除重复值
 
+见例子。
+
+1.在聚合函数的参数中使用distinct，可以删除重复数据。
+
+## 2.对表进行分组
+
+### 1.group by：汇总
+
+```sql
+select <列名1>,<列名2>,<列名N>
+from <表名>
+group by <列名1>,<列名2>,<列名N>;
+```
+
+group by子句就像切蛋糕那样将表进行了分组。
+
+group by子句中指定的列称为**聚合键**或者**分组列**，是分组的依据。
+
+子句的书写顺序（暂定）：select-from-where-group by
 
 ## N.例子
 
@@ -399,4 +427,26 @@ from Product;
 --计算sale_price的合计值
 select sum(sale_price)
 from Product;
+
+--计算sale_price的平均值
+select avg(sale_price)
+from Product;
+
+--计算最大值和最小值
+select max(sale_price),min(purchase_price)
+from Product;
+
+--计算去除重复数据后的数据行数
+select count(distinct product_type)
+from Product;
+
+--先计算数据行数，再删除重复数据的结果。结果得到所有行数。
+select distinct count(product_type)
+from Product;
+
+--按照商品种类统计数据行数
+select product_type,count(*)
+from Product
+group by product_type;
+
 ```

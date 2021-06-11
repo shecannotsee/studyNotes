@@ -515,6 +515,81 @@ public Result count(@RequestBody User user){
 
 ```
 
+添加状态类
+
+```java
+public class Result
+{
+    public static Integer SUCCESS_CODE = 200;
+    public static Integer ERROR_CODE = 500;
+    public Integer status = SUCCESS_CODE;
+    public String msg = "操作成功";
+    public Object data = null;
+    
+    //失败响应
+    public static Result fail(Integer status, String msg){
+        return new Result(status, msg, null);
+    }
+ 
+    
+    public static Result fail(String msg){
+        return new Result(ERROR_CODE, msg, null);
+    }
+    
+    public static Result fail(){
+        return new Result(ERROR_CODE, "操作失败");
+    }
+    
+    //成功响应
+    public static Result ok(Integer status, String msg, Object data){
+        return new Result(status, msg, data);
+    }
+    
+    public static Result ok(String msg, Object data){
+        return new Result(msg data);
+    }
+    
+    public static Result ok(Object data){
+        return new Result(data);
+    }
+    
+    public static Result ok(){
+        return new Result();
+    }
+    
+    //构造重载
+    public Result(){
+        
+    }
+    
+    public Result(Object data){
+        this.data = data;
+    }
+    
+    public Result(String msg,Object data){
+    	this.msg = msg;  
+        this.data = data;
+    }
+    
+    public Result(Integer status, String msg){
+        this.status = status;
+        this.msg = msg;
+    }
+    
+    public Result(Integer status, String msg, Object data){
+        this.status = status;
+        this.msg = msg;  
+        this.data = data;
+    }
+    
+    
+    //...get与set
+    
+}
+```
+
+
+
 ## 6.全局异常处理
 
 在framework文件夹下建立一个mvc文件夹，再来个类文件，类名叫MyControllerAdvice.java
@@ -551,6 +626,15 @@ Pagehelper分页，
 分页关键字limit，【limit i,n】i是索引下标从0开始，可省略，n是显示的数量，也就是数据库条数
 
 在web页面中做分页的时候，用到pageNo，pageSize
+
+```sql
+select * from 【表名】 limit (1-1)*10,10 #第一页
+select * from 【表名】 limit (2-1)*10,10 #第二页
+select * from 【表名】 limit (3-1)*10,10 #第三页
+select * from 【表名】 limit (4-1)*10,10 #第四页
+```
+
+分页插件使用举例
 
 ```java
 //获取第1页，10条内容，默认查询总数count
@@ -610,12 +694,24 @@ public class User extends Entity
 ```java
 public PageInfo<User> query(User user){
     if(user != null && user.getPage() != null){
-        PageHelper.startpPage(user.getPage(),user.getLimit());
+        PageHelper.startpPage(user.getPage(), user.getLimit());
     }
     List<User> list = userDao.query(Maps.build().beanToMap(user));
     return new PageInfo<User>(list);
 }
 ```
+
+对于query的controller层
+
+```java
+@PostMapping("/query")
+public Result query(@RequestBody User user){
+    PageInfo<User> pageInfo = userService.query(user);
+    return Result.ok(pageInfo);
+}
+```
+
+
 
 # 三、多表查询
 
